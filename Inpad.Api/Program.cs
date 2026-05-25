@@ -77,11 +77,12 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 
-    const string adminEmail = "admin@mail.ru";
+    var adminEmail = app.Configuration["Seed:AdminEmail"]!;
+    var adminPassword = app.Configuration["Seed:AdminPassword"]!;
     if (!db.Users.Any(u => u.Email == adminEmail))
     {
         var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
-            System.Text.Encoding.UTF8.GetBytes("ADMIN"))).ToLower();
+            System.Text.Encoding.UTF8.GetBytes(adminPassword))).ToLower();
         db.Users.Add(new Inpad.Api.Models.User
         {
             Email = adminEmail,
