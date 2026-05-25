@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: inpad-postgres
+    environment:
+      POSTGRES_DB: inpad
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inpad"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./Inpad.Api
+      dockerfile: Dockerfile
+    container_name: inpad-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=inpad;Username=postgres;Password=postgres
+      - Jwt__Secret=inpad-super-secret-key-change-in-production-32chars
+      - Jwt__Issuer=inpad-api
+      - Jwt__Audience=inpad-frontend
+      - Jwt__ExpiryMinutes=1440
+      - WordPress__Url=https://inpad.ru
+      - WordPress__Username=
+      - WordPress__AppPassword=
+      - WordPress__PostType=objects
+    volumes:
+      - uploads_data:/app/wwwroot/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./inpad-frontend
+      dockerfile: Dockerfile
+    container_name: inpad-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  uploads_data:
