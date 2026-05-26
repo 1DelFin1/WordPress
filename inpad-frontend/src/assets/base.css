@@ -1,0 +1,2 @@
+/* Base reset — see main.css for project tokens */
+*, *::before, *::after { box-sizing: border-box; }
