@@ -105,7 +105,31 @@ public class ArchObjectsController(AppDbContext db, WordPressService wp, AuditSe
             ObjectType = dto.ObjectType,
             ProjectStatus = dto.ProjectStatus,
             DesignStage = dto.DesignStage,
-            ShortDescription = dto.ShortDescription
+            YearStart = dto.YearStart,
+            YearEnd = dto.YearEnd,
+            Client = dto.Client,
+            InpadRole = dto.InpadRole,
+            ShortDescription = dto.ShortDescription,
+            FullDescription = dto.FullDescription,
+            SeoTitle = dto.SeoTitle,
+            SeoDescription = dto.SeoDescription,
+            SeoKeywords = dto.SeoKeywords,
+            Slug = dto.Slug,
+            OgImageUrl = dto.OgImageUrl,
+            Characteristics = dto.Characteristics.Select(c => new ObjectCharacteristic
+            {
+                Key = c.Key,
+                Label = c.Label,
+                Value = c.Value,
+                Unit = c.Unit,
+                SortOrder = c.SortOrder
+            }).ToList(),
+            TeamMembers = dto.TeamMembers.Select(t => new ObjectTeamMember
+            {
+                Name = t.Name,
+                Role = t.Role,
+                SortOrder = t.SortOrder
+            }).ToList()
         };
 
         if (dto.CategoryIds.Count > 0)
