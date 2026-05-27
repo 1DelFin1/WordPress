@@ -68,7 +68,7 @@ function fullUrl(u?: string) {
         <div class="og">
           <img v-if="form.ogImageUrl" :src="fullUrl(form.ogImageUrl)" alt="" />
           <div v-else class="og-placeholder">Не задано</div>
-          <NButton size="small" @click="pickOg">Выбрать файл</NButton>
+          <NButton size="small" :disabled="form.id === 0" :title="form.id === 0 ? 'Сначала сохраните объект' : ''" @click="pickOg">Выбрать файл</NButton>
           <input ref="ogInput" type="file" accept="image/*" hidden @change="handleOg" />
         </div>
       </NFormItem>
