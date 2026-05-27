@@ -160,7 +160,7 @@ async function handleMenu(key: string, o: ArchObject) {
     </div>
 
     <div class="filters">
-      <NInput v-model:value="search" placeholder="Поиск по названию, адресу, заказчику…" clearable class="search" />
+      <NInput v-model:value="search" placeholder="Поиск по названию…" clearable class="search" />
       <div class="chips">
         <button
           v-for="s in statuses"
@@ -172,7 +172,7 @@ async function handleMenu(key: string, o: ArchObject) {
       </div>
       <NSelect v-model:value="objectType" :options="typeOptions" placeholder="Все типы" clearable class="sel" />
       <NSelect v-model:value="city" :options="cityOptions" placeholder="Все города" clearable class="sel" />
-      <NSelect v-model:value="yearStart" :options="yearOptions" placeholder="Любой" clearable class="sel" />
+      <NSelect v-model:value="yearStart" :options="yearOptions" placeholder="Любой" clearable class="sel sel-year" />
       <NSelect v-model:value="inpadRole" :options="roleOptions" placeholder="Все роли" clearable class="sel" />
     </div>
 
@@ -231,28 +231,30 @@ async function handleMenu(key: string, o: ArchObject) {
 .sub { color: var(--color-text-secondary); font-size: 13px; margin: 4px 0 0; }
 .filters {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-wrap: nowrap;
   align-items: center;
+  gap: 8px;
   margin-bottom: 16px;
   background: #fff;
-  padding: 12px;
+  padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid var(--color-border);
 }
-.search { width: 280px; }
-.chips { display: flex; gap: 6px; }
+.search { flex: 1; min-width: 120px; }
+.chips { display: flex; gap: 4px; flex-shrink: 0; }
 .chip {
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  padding: 4px 12px;
+  padding: 4px 10px;
   font-size: 12px;
   cursor: pointer;
+  white-space: nowrap;
   color: var(--color-text);
 }
 .chip.active { background: var(--color-brand); color: #fff; border-color: var(--color-brand); }
-.sel { width: 150px; }
+.sel { width: 130px; flex-shrink: 0; }
+.sel-year { width: 100px; }
 
 .table-wrap { padding: 0; overflow: hidden; }
 .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
