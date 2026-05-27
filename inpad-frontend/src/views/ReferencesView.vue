@@ -16,6 +16,7 @@ const NAV = [
   { key: 'cities', label: 'Города' },
   { key: 'inpad-roles', label: 'Роли компании' },
   { key: 'project-statuses', label: 'Статусы проектов' },
+  { key: 'design-stages', label: 'Стадии проектирования' },
 ]
 
 const type = computed(() => String(route.params.type || 'object-types'))
