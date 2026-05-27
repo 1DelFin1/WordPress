@@ -142,8 +142,8 @@ public class ExportService
         if (!string.IsNullOrWhiteSpace(obj.City)) sb.AppendLine($"Город: {obj.City}");
         if (!string.IsNullOrWhiteSpace(obj.Address)) sb.AppendLine($"Адрес: {obj.Address}");
         if (!string.IsNullOrWhiteSpace(obj.ObjectType)) sb.AppendLine($"Тип: {obj.ObjectType}");
-        if (obj.ProjectStatus.HasValue) sb.AppendLine($"Статус проекта: {obj.ProjectStatus}");
-        if (obj.DesignStage.HasValue) sb.AppendLine($"Стадия: {obj.DesignStage}");
+        if (!string.IsNullOrWhiteSpace(obj.ProjectStatus)) sb.AppendLine($"Статус проекта: {obj.ProjectStatus}");
+        if (!string.IsNullOrWhiteSpace(obj.DesignStage)) sb.AppendLine($"Стадия: {obj.DesignStage}");
         sb.AppendLine($"Годы: {FormatYears(obj.YearStart, obj.YearEnd)}");
         if (!string.IsNullOrWhiteSpace(obj.Client)) sb.AppendLine($"Заказчик: {obj.Client}");
         if (!string.IsNullOrWhiteSpace(obj.InpadRole)) sb.AppendLine($"Роль ИНПАД: {obj.InpadRole}");

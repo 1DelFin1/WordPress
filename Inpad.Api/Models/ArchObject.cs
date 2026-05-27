@@ -8,8 +8,8 @@ public class ArchObject
     public string? City { get; set; }
     public string? Address { get; set; }
     public string? ObjectType { get; set; }
-    public ProjectStatus? ProjectStatus { get; set; }
-    public DesignStage? DesignStage { get; set; }
+    public string? ProjectStatus { get; set; }
+    public string? DesignStage { get; set; }
     public ObjectStatus Status { get; set; } = ObjectStatus.Draft;
     public int? YearStart { get; set; }
     public int? YearEnd { get; set; }

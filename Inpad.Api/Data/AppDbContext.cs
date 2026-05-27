@@ -23,8 +23,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             e.Property(x => x.Status).HasConversion<string>();
             e.Property(x => x.WordPressStatus).HasConversion<string>();
-            e.Property(x => x.ProjectStatus).HasConversion<string>();
-            e.Property(x => x.DesignStage).HasConversion<string>();
+
             e.HasIndex(x => x.Slug)
                 .IsUnique()
                 .HasFilter("\"Slug\" IS NOT NULL");

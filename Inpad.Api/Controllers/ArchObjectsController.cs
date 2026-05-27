@@ -142,8 +142,8 @@ public class ArchObjectsController(AppDbContext db, WordPressService wp, AuditSe
         if (dto.City is not null) obj.City = dto.City;
         if (dto.Address is not null) obj.Address = dto.Address;
         if (dto.ObjectType is not null) obj.ObjectType = dto.ObjectType;
-        if (dto.ProjectStatus.HasValue) obj.ProjectStatus = dto.ProjectStatus;
-        if (dto.DesignStage.HasValue) obj.DesignStage = dto.DesignStage;
+        if (dto.ProjectStatus is not null) obj.ProjectStatus = dto.ProjectStatus;
+        if (dto.DesignStage is not null) obj.DesignStage = dto.DesignStage;
         if (dto.YearStart.HasValue) obj.YearStart = dto.YearStart;
         if (dto.YearEnd.HasValue) obj.YearEnd = dto.YearEnd;
         if (dto.Client is not null) obj.Client = dto.Client;
@@ -162,6 +162,30 @@ public class ArchObjectsController(AppDbContext db, WordPressService wp, AuditSe
                 .Where(x => dto.CategoryIds.Contains(x.Id))
                 .ToListAsync();
             obj.Categories = categories;
+        }
+
+        if (dto.Characteristics is not null)
+        {
+            obj.Characteristics.Clear();
+            obj.Characteristics = dto.Characteristics.Select(c => new ObjectCharacteristic
+            {
+                Key = c.Key,
+                Label = c.Label,
+                Value = c.Value,
+                Unit = c.Unit,
+                SortOrder = c.SortOrder
+            }).ToList();
+        }
+
+        if (dto.TeamMembers is not null)
+        {
+            obj.TeamMembers.Clear();
+            obj.TeamMembers = dto.TeamMembers.Select(t => new ObjectTeamMember
+            {
+                Name = t.Name,
+                Role = t.Role,
+                SortOrder = t.SortOrder
+            }).ToList();
         }
 
         obj.UpdatedAt = DateTime.UtcNow;
