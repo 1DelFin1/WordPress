@@ -33,7 +33,7 @@ const page = ref(1)
 const pageSize = 10
 
 const showAddModal = ref(false)
-const addForm = ref({ lastName: '', firstName: '', middleName: '', email: '', login: '', role: 'Editor' })
+const addForm = ref({ lastName: '', firstName: '', middleName: '', email: '', password: '', role: 'Editor' })
 const addLoading = ref(false)
 
 async function load() {
@@ -117,20 +117,25 @@ function confirmDelete(u: UserRow) {
 async function submitAdd() {
   addLoading.value = true
   try {
+    if (!addForm.value.password) {
+      message.error('Введите пароль')
+      addLoading.value = false
+      return
+    }
     const r = await fetch(`${base}/api/users`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({
         name: [addForm.value.lastName, addForm.value.firstName, addForm.value.middleName].filter(Boolean).join(' '),
-        email: addForm.value.login,
-        password: Math.random().toString(36).slice(2, 10),
+        email: addForm.value.email,
+        password: addForm.value.password,
         role: addForm.value.role
       })
     })
     if (r.ok) {
       message.success('Пользователь создан')
       showAddModal.value = false
-      addForm.value = { lastName: '', firstName: '', middleName: '', email: '', login: '', role: 'Editor' }
+      addForm.value = { lastName: '', firstName: '', middleName: '', email: '', password: '', role: 'Editor' }
       await load()
     } else {
       const err = await r.json().catch(() => ({}))
@@ -247,18 +252,17 @@ const filterStatusOptions = [
           <NFormItem label="Отчество">
             <NInput v-model:value="addForm.middleName" placeholder="" />
           </NFormItem>
-          <NFormItem label="Email *">
-            <NInput v-model:value="addForm.email" placeholder="" />
-          </NFormItem>
           <div class="grid-2">
-            <NFormItem label="Логин *">
-              <NInput v-model:value="addForm.login" placeholder="" />
+            <NFormItem label="Email *">
+              <NInput v-model:value="addForm.email" placeholder="" />
             </NFormItem>
             <NFormItem label="Роль *">
               <NSelect v-model:value="addForm.role" :options="roleOptions" />
             </NFormItem>
           </div>
-          <div class="info-note">После создания пользователь получит письмо со ссылкой для установки пароля.</div>
+          <NFormItem label="Пароль *">
+            <NInput v-model:value="addForm.password" type="password" show-password-on="click" placeholder="Минимум 6 символов" />
+          </NFormItem>
         </NForm>
         <div class="modal-actions">
           <NButton @click="showAddModal = false">Отмена</NButton>

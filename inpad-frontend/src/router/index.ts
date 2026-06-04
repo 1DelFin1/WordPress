@@ -53,6 +53,7 @@ const router = createRouter({
       path: '/users',
       name: 'users',
       component: () => import('@/views/UsersView.vue'),
+      meta: { adminOnly: true },
     },
     {
       path: '/settings',
@@ -73,6 +74,9 @@ router.beforeEach((to) => {
   }
   if (to.meta.public && auth.isAuthenticated && (to.name === 'login' || to.name === 'register')) {
     return { name: 'objects' }
+  }
+  if (to.meta.adminOnly && auth.user?.role !== 'Administrator') {
+    return { name: 'error-403' }
   }
 })
 

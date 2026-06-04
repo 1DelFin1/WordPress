@@ -23,6 +23,57 @@ public class UsersController(AppDbContext db) : ControllerBase
         return Ok(users);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
+    {
+        if (!IsAdmin()) return Forbid();
+
+        if (await db.Users.AnyAsync(u => u.Email == dto.Email))
+            return BadRequest(new { message = "Пользователь с таким email уже существует." });
+
+        if (string.IsNullOrWhiteSpace(dto.Password) || dto.Password.Length < 6)
+            return BadRequest(new { message = "Пароль должен содержать не менее 6 символов." });
+
+        if (!Enum.TryParse<UserRole>(dto.Role, out var role))
+            return BadRequest(new { message = "Недопустимая роль." });
+
+        var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes(dto.Password))).ToLower();
+
+        var user = new User
+        {
+            Email = dto.Email,
+            Name = dto.Name,
+            PasswordHash = hash,
+            Role = role,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        db.Users.Add(user);
+        await db.SaveChangesAsync();
+
+        return Ok(new { user.Id, user.Email, user.Name, user.Role, user.IsActive, user.CreatedAt });
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateUserDto dto)
+    {
+        if (!IsAdmin()) return Forbid();
+
+        var user = await db.Users.FindAsync(id);
+        if (user is null) return NotFound();
+
+        if (dto.Name is not null) user.Name = dto.Name;
+        if (dto.IsActive.HasValue) user.IsActive = dto.IsActive.Value;
+        if (dto.Role is not null && Enum.TryParse<UserRole>(dto.Role, out var role))
+            user.Role = role;
+
+        await db.SaveChangesAsync();
+
+        return Ok(new { user.Id, user.Email, user.Name, user.Role, user.IsActive, user.CreatedAt });
+    }
+
     [HttpPut("{id:int}/role")]
     public async Task<IActionResult> ChangeRole(int id, [FromBody] ChangeRoleDto dto)
     {
@@ -92,4 +143,19 @@ public class UsersController(AppDbContext db) : ControllerBase
 public class ChangeRoleDto
 {
     public string Role { get; set; } = string.Empty;
+}
+
+public class CreateUserDto
+{
+    public string Email { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Role { get; set; } = "Editor";
+}
+
+public class UpdateUserDto
+{
+    public string? Name { get; set; }
+    public string? Role { get; set; }
+    public bool? IsActive { get; set; }
 }

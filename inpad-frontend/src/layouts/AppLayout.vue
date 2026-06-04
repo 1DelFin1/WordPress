@@ -19,7 +19,7 @@ function logout() {
       <nav class="nav">
         <RouterLink to="/objects" class="nav-link" active-class="active">Объекты</RouterLink>
         <RouterLink to="/references" class="nav-link" active-class="active">Справочники</RouterLink>
-        <RouterLink to="/users" class="nav-link" active-class="active">Пользователи</RouterLink>
+        <RouterLink v-if="auth.user?.role === 'Administrator'" to="/users" class="nav-link" active-class="active">Пользователи</RouterLink>
         <RouterLink to="/settings" class="nav-link" active-class="active">Настройки</RouterLink>
       </nav>
       <div class="user">
